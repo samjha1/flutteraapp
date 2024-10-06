@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "163168962642",
+    "project_id": "flutter-de443",
+    "storage_bucket": "flutter-de443.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163168962642:android:22b64ec7ae4c8b653df78b",
+        "android_client_info": {
+          "package_name": "com.example.my_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBNpaB1Qs7pEfCU73r7c_XC6qx1_zqFGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
