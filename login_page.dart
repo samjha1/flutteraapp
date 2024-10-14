@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'dashboard_page.dart'; // Ensure this file exists
 
 void main() {
@@ -28,7 +28,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
@@ -37,19 +37,16 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
 
-    // The API URL of your XAMPP server (make sure XAMPP Apache server is running)
     const String apiUrl = 'http://localhost/api/login.php';
 
-    // Send a POST request to the PHP server
     final response = await http.post(
       Uri.parse(apiUrl),
       body: {
-        'username': _usernameController.text,
+        'email': _emailController.text,
         'password': _passwordController.text,
       },
     );
 
-    // Decode the response
     final Map<String, dynamic> responseData = json.decode(response.body);
 
     if (responseData['success'] == "true") {
@@ -57,7 +54,6 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text(responseData['message'])),
       );
 
-      // Navigate to DashboardPage after successful login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardPage()),
@@ -76,30 +72,257 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login Page'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true, // To hide the password as the user types
-            ),
-            const SizedBox(height: 20),
-            _isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _signIn,
-                    child: const Text('Login'),
+      backgroundColor: Colors.blue.shade900, // Blue background
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Login',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.bold,
                   ),
-          ],
+                ),
+                const SizedBox(height: 40),
+
+                // Email TextField
+                TextField(
+                  controller: _emailController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.blue.shade700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Password TextField
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.blue.shade700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // Login Button
+                _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : ElevatedButton(
+                        onPressed: _signIn,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.orange.shade600, // Button color
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 100),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+
+                const SizedBox(height: 20),
+
+                // Forgot Password Option
+                TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    'Forgot Password?',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+
+                // Sign Up Option
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpPage()),
+                    );
+                  },
+                  child: const Text(
+                    'Don\'t have an account? Sign Up',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _signUp() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    const String apiUrl = 'http://localhost/api/signup.php';
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'email': _emailController.text,
+        'password': _passwordController.text,
+      },
+    );
+
+    final Map<String, dynamic> responseData = json.decode(response.body);
+
+    if (responseData['success'] == "true") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseData['message'])),
+      );
+
+      Navigator.pop(context); // Go back to login page after successful signup
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseData['message'])),
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue.shade900,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Sign Up',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 40),
+
+                // Email TextField
+                TextField(
+                  controller: _emailController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.blue.shade700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Password TextField
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.blue.shade700,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // Sign Up Button
+                _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : ElevatedButton(
+                        onPressed: _signUp,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.orange.shade600, // Button color
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 100),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+              ],
+            ),
+          ),
         ),
       ),
     );
