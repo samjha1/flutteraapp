@@ -1,12 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import the login page
-import 'firebase_options.dart'; // Import the generated Firebase options
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+void main() {
+  runApp(const MyApp()); // Start the app with MyApp
 }
 
 class MyApp extends StatelessWidget {
@@ -14,12 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LoginPage(), // Start with login page
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false, // Optional, removes the debug banner
+      title: 'Login App', // Title of the app
+      home: LoginPage(), // Set LoginPage as the home page
     );
   }
 }
