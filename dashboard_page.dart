@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart'; // For external URLs
-import 'analytics.dart';
+import 'visitors.dart'; // Ensure this import matches your file name
 import 'skill.dart';
 import 'SiteBooking.dart';
 import 'games.dart' as games; // Prefix for games.dart
@@ -61,10 +61,7 @@ class LogoutScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.popUntil(
-                    context,
-                    (route) => route
-                        .isFirst); // Go back to the first route (Login or Exit)
+                Navigator.popUntil(context, (route) => route.isFirst);
               },
               child: const Text('Logout'),
             ),
@@ -76,8 +73,8 @@ class LogoutScreen extends StatelessWidget {
 }
 
 // Dashboard Screen
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +90,9 @@ class DashboardScreen extends StatelessWidget {
         mainAxisSpacing: 16.0,
         children: const [
           DashboardItem(
-              icon: Icons.bar_chart, label: 'Analytics', color: Colors.orange),
+              icon: Icons.group,
+              label: 'Visitors',
+              color: Colors.blueAccent), // Visitors icon
           DashboardItem(
               icon: Icons.account_balance_outlined,
               label: 'Balance',
@@ -106,7 +105,7 @@ class DashboardScreen extends StatelessWidget {
           DashboardItem(
               icon: Icons.event_available,
               label: 'SiteBooking',
-              color: Colors.teal), // Added SiteBooking
+              color: Colors.teal),
           DashboardItem(
               icon: Icons.facebook,
               label: 'Social Media',
@@ -122,38 +121,36 @@ class DashboardScreen extends StatelessWidget {
               icon: const Icon(Icons.home, color: Colors.white),
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const HomeScreen()));
               },
             ),
             IconButton(
               icon: const Icon(Icons.settings, color: Colors.white),
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SettingsScreen()),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsScreen()));
               },
             ),
             IconButton(
               icon: const Icon(Icons.person, color: Colors.white),
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ProfileScreen()),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
               },
             ),
             IconButton(
               icon: const Icon(Icons.logout, color: Colors.white),
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LogoutScreen()),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LogoutScreen()));
               },
             ),
           ],
@@ -185,9 +182,7 @@ class _DashboardItemState extends State<DashboardItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       elevation: 8.0,
       child: InkWell(
         onTap: () async {
@@ -195,63 +190,41 @@ class _DashboardItemState extends State<DashboardItem> {
             _isTapped = !_isTapped;
           });
 
-          if (widget.label == 'Analytics') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AnalyticsScreen()),
-            );
-          } else if (widget.label == 'Balance') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      const balance.BalanceScreen()), // Use prefix
-            );
-          } else if (widget.label == 'Games') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const games.GameScreen()), // Use prefix
-            );
-          } else if (widget.label == 'Skills') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SkillScreen()),
-            );
-          } else if (widget.label == 'SiteBooking') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SiteBookingPage(
-                  // Provide actual values
-                  date: '2024-10-03',
-                  fullName: 'John Doe',
-                  relation: 'Son',
-                  dob: '2000-01-01',
-                  occupation: 'Engineer',
-                  presentAddress: '123 Main St',
-                  permanentAddress: '456 Elm St',
-                  relationship: 'Father',
-                  mobileNo: '1234567890',
-                  nomineeName: 'Jane Doe',
-                  chequeNo: '987654',
-                  drawnOn: 'ABC Bank',
-                  layoutTitle: 'Skyline Apartments',
-                  plotNo: '1A',
-                  plotSize: '1000 sq ft',
-                  plotRate: '1500',
-                  paymentMode: 'Cheque',
-                  paymentAmount: '1500000',
-                ),
-              ),
-            );
-          } else if (widget.label == 'Social Media') {
-            const url = 'https://www.instagram.com/';
-            if (await canLaunch(url)) {
-              await launch(url);
-            } else {
-              throw 'Could not launch $url';
+          try {
+            if (widget.label == 'Visitors') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const VisitorsScreen()));
+            } else if (widget.label == 'Balance') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const balance.BalanceScreen())); // Use prefix
+            } else if (widget.label == 'Games') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const games.GameScreen())); // Use prefix
+            } else if (widget.label == 'Skills') {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const SkillScreen()));
+            } else if (widget.label == 'SiteBooking') {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SiteBookingPage()));
+            } else if (widget.label == 'Social Media') {
+              const url = 'https://www.instagram.com/';
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw 'Could not launch $url';
+              }
             }
+          } catch (e) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(e.toString())));
           }
         },
         child: Center(
@@ -260,19 +233,15 @@ class _DashboardItemState extends State<DashboardItem> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  widget.icon,
-                  size: _isTapped ? 60.0 : 50.0,
-                  color: widget.color,
-                ),
+                Icon(widget.icon,
+                    size: _isTapped ? 60.0 : 50.0, color: widget.color),
                 const SizedBox(height: 10.0),
                 Text(
                   widget.label,
                   style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
                 ),
               ],
             ),
