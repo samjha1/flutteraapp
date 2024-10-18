@@ -5,6 +5,8 @@ import 'skill.dart';
 import 'SiteBooking.dart';
 import 'games.dart' as games; // Prefix for games.dart
 import 'balance.dart' as balance; // Prefix for balance.dart
+import 'profile.dart'; // Import the ProfileScreen
+import 'login_page.dart';
 
 // Home Screen
 class HomeScreen extends StatelessWidget {
@@ -32,46 +34,6 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-// Profile Screen
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
-      body: const Center(child: Text('Profile Page')),
-    );
-  }
-}
-
-// Logout Screen
-class LogoutScreen extends StatelessWidget {
-  const LogoutScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Logout')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Are you sure you want to logout?'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-              child: const Text('Logout'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // Dashboard Screen
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -90,9 +52,7 @@ class DashboardPage extends StatelessWidget {
         mainAxisSpacing: 16.0,
         children: const [
           DashboardItem(
-              icon: Icons.group,
-              label: 'Visitors',
-              color: Colors.blueAccent), // Visitors icon
+              icon: Icons.group, label: 'Visitors', color: Colors.blueAccent),
           DashboardItem(
               icon: Icons.account_balance_outlined,
               label: 'Balance',
@@ -147,10 +107,9 @@ class DashboardPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.logout, color: Colors.white),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LogoutScreen()));
+                // Define LoginPage if you haven't
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
               },
             ),
           ],
@@ -161,23 +120,17 @@ class DashboardPage extends StatelessWidget {
 }
 
 // Dashboard Item Widget
-class DashboardItem extends StatefulWidget {
+class DashboardItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
 
-  const DashboardItem(
-      {super.key,
-      required this.icon,
-      required this.label,
-      required this.color});
-
-  @override
-  _DashboardItemState createState() => _DashboardItemState();
-}
-
-class _DashboardItemState extends State<DashboardItem> {
-  bool _isTapped = false;
+  const DashboardItem({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -186,35 +139,31 @@ class _DashboardItemState extends State<DashboardItem> {
       elevation: 8.0,
       child: InkWell(
         onTap: () async {
-          setState(() {
-            _isTapped = !_isTapped;
-          });
-
           try {
-            if (widget.label == 'Visitors') {
+            if (label == 'Visitors') {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const VisitorsScreen()));
-            } else if (widget.label == 'Balance') {
+            } else if (label == 'Balance') {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          const balance.BalanceScreen())); // Use prefix
-            } else if (widget.label == 'Games') {
+                      builder: (context) => balance.Visitorsdata()));
+            } else if (label == 'Games') {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          const games.GameScreen())); // Use prefix
-            } else if (widget.label == 'Skills') {
+                      builder: (context) => const games.GameScreen()));
+            } else if (label == 'Skills') {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const SkillScreen()));
-            } else if (widget.label == 'SiteBooking') {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SiteBookingPage()));
-            } else if (widget.label == 'Social Media') {
+            } else if (label == 'SiteBooking') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SiteBookingPage()));
+            } else if (label == 'Social Media') {
               const url = 'https://www.instagram.com/';
               if (await canLaunch(url)) {
                 await launch(url);
@@ -233,11 +182,10 @@ class _DashboardItemState extends State<DashboardItem> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(widget.icon,
-                    size: _isTapped ? 60.0 : 50.0, color: widget.color),
+                Icon(icon, size: 50.0, color: color),
                 const SizedBox(height: 10.0),
                 Text(
-                  widget.label,
+                  label,
                   style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
