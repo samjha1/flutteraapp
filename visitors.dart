@@ -48,10 +48,41 @@ class _FormPageState extends State<FormPage> {
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
-      print('Response: ${responseData['message'] ?? responseData['error']}');
+
+      if (responseData['message'] != null) {
+        // Show the popup dialog on successful insertion
+        _showPopupDialog(context, 'Success', responseData['message']);
+      } else {
+        // Handle error case
+        _showPopupDialog(
+            context, 'Error', responseData['error'] ?? 'Something went wrong!');
+      }
     } else {
       print('Request failed with status: ${response.statusCode}.');
+      _showPopupDialog(
+          context, 'Error', 'Failed to submit form. Please try again.');
     }
+  }
+
+  // Function to show the popup dialog
+  void _showPopupDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the popup
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -59,6 +90,12 @@ class _FormPageState extends State<FormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Form Submission'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -95,6 +132,8 @@ class _FormPageState extends State<FormPage> {
                   submitForm(fullName, number, purpose, meetingPerson);
                 } else {
                   print('Please fill in all fields.');
+                  _showPopupDialog(
+                      context, 'Error', 'Please fill in all fields.');
                 }
               },
               child: const Text('Submit'),
