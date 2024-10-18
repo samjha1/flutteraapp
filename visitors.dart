@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dashboard_page.dart';
 
 void main() {
   runApp(const VisitorsScreen());
@@ -93,7 +94,11 @@ class _FormPageState extends State<FormPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => DashboardPage()),
+            );
+            // Navigate back to the previous screen
           },
         ),
       ),
