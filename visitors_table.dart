@@ -1,220 +1,167 @@
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'visitors.dart';
+import 'dashboard_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const VisitorsScreen());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key}); // Add 'const' here
+class VisitorsScreen extends StatelessWidget {
+  const VisitorsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Visitors Table',
-      theme: ThemeData.dark().copyWith(
-        primaryColor: const Color.fromARGB(255, 23, 146, 207),
-        scaffoldBackgroundColor:
-            const Color.fromARGB(255, 9, 59, 133), // Dark blue background
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(color: Colors.white), // Updated for Flutter 2.5+
-          bodyMedium: TextStyle(color: Color.fromARGB(255, 240, 236, 236)),
-        ),
-      ),
-      home: const Visitorsdata(), // Add 'const' here
+    return const MaterialApp(
+      title: 'Form Submission App',
+      home: FormPage(),
     );
   }
 }
 
-class Visitorsdata extends StatefulWidget {
-  const Visitorsdata({super.key}); // Add 'const' here
+class FormPage extends StatefulWidget {
+  const FormPage({super.key});
 
   @override
-  _VisitorsdataState createState() => _VisitorsdataState();
+  _FormPageState createState() => _FormPageState();
 }
 
-class _VisitorsdataState extends State<Visitorsdata> {
-  List visitors = []; // List to hold visitors data
-  bool isLoading = true; // To show loading indicator
+class _FormPageState extends State<FormPage> {
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController numberController = TextEditingController();
+  final TextEditingController purposeController = TextEditingController();
+  final TextEditingController meetingPersonController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    fetchVisitorsData();
-  }
-
-  // Fetching visitors data from the backend
-  Future<void> fetchVisitorsData() async {
-    final response =
-        await http.get(Uri.parse('http://localhost/api/get_all_visitors.php'));
+  Future<void> submitForm(String fullName, String number, String purpose,
+      String meetingPerson) async {
+    final response = await http.post(
+      Uri.parse('http://localhost/api/visitors.php'), // Update this URL
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'full_name': fullName,
+        'number': number,
+        'purpose': purpose,
+        'meeting_person': meetingPerson,
+      },
+    );
 
     if (response.statusCode == 200) {
-      // Decode the JSON response from the backend
-      setState(() {
-        visitors = json.decode(response.body);
-        isLoading = false; // Stop loading once data is fetched
-      });
+      final responseData = json.decode(response.body);
+
+      if (responseData['message'] != null) {
+        // Show the popup dialog on successful insertion
+        _showPopupDialog(context, 'Success', responseData['message']);
+      } else {
+        // Handle error case
+        _showPopupDialog(
+            context, 'Error', responseData['error'] ?? 'Something went wrong!');
+      }
     } else {
-      throw Exception('Failed to load visitors data');
+      print('Request failed with status: ${response.statusCode}.');
+      _showPopupDialog(
+          context, 'Error', 'Failed to submit form. Please try again.');
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Visitors Table'), // Add 'const' here
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: '+ Add Visitor',
-            onPressed: () {
-              // Navigate to the AddVisitorPage
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const VisitorsScreen()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator()) // Add 'const' here
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(
-                      255, 17, 157, 212), // White background for the table
-                  borderRadius:
-                      BorderRadius.circular(8), // Optional: rounded corners
-                ),
-                child: DataTable2(
-                  columnSpacing: 12,
-                  horizontalMargin: 12,
-                  minWidth: 600,
-                  columns: [
-                    DataColumn2(
-                      label: Container(
-                        color: const Color.fromARGB(
-                            255, 17, 157, 212), // Set header background color
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: const Text(
-                          'Full Name',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                      ),
-                      size: ColumnSize.L,
-                    ),
-                    DataColumn(
-                      label: Container(
-                        color: const Color.fromARGB(
-                            255, 17, 157, 212), // Set header background color
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: const Text(
-                          'Number',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Container(
-                        color: const Color.fromARGB(
-                            255, 17, 157, 212), // Set header background color
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: const Text(
-                          'Purpose',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Container(
-                        color: const Color.fromARGB(
-                            255, 17, 157, 212), // Set header background color
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: const Text(
-                          'Meeting Person',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 238, 234, 234)),
-                        ),
-                      ),
-                    ),
-                  ],
-                  rows: visitors.map<DataRow>((visitor) {
-                    return DataRow(
-                      color: MaterialStateProperty.all(const Color.fromARGB(
-                          255, 252, 251, 251)), // Row background color
-                      cells: [
-                        DataCell(Text(visitor['full_name'] ?? 'N/A')),
-                        DataCell(Text(visitor['number'] ?? 'N/A')),
-                        DataCell(Text(visitor['purpose'] ?? 'N/A')),
-                        DataCell(Text(visitor['meeting_person'] ?? 'N/A')),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
+  // Function to show the popup dialog
+  void _showPopupDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the popup
+              },
+              child: const Text('OK'),
             ),
+          ],
+        );
+      },
     );
   }
-}
-
-// New page for adding visitor details
-class AddVisitorPage extends StatelessWidget {
-  const AddVisitorPage({super.key}); // Add 'const' here
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Visitor'), // Add 'const' here
+        title: const Text('Form Submission'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Navigate back to the dashboard page and remove the current page from the stack
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const DashboardPage()),
+              (Route<dynamic> route) =>
+                  false, // Remove all routes until reaching the dashboard
+            );
+          },
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: fullNameController,
+              decoration: const InputDecoration(
                 labelText: 'Full Name',
-                border: OutlineInputBorder(),
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
               ),
             ),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+            const SizedBox(height: 16), // Adds space between text fields
+            TextField(
+              controller: numberController,
+              decoration: const InputDecoration(
                 labelText: 'Number',
-                border: OutlineInputBorder(),
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
               ),
-              keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: purposeController,
+              decoration: const InputDecoration(
                 labelText: 'Purpose',
-                border: OutlineInputBorder(),
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
               ),
             ),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: meetingPersonController,
+              decoration: const InputDecoration(
                 labelText: 'Meeting Person',
-                border: OutlineInputBorder(),
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24), // Space before submit button
             ElevatedButton(
               onPressed: () {
-                // Handle form submission
-                // Add logic to save the new visitor
+                String fullName = fullNameController.text.trim();
+                String number = numberController.text.trim();
+                String purpose = purposeController.text.trim();
+                String meetingPerson = meetingPersonController.text.trim();
+
+                if (fullName.isNotEmpty &&
+                    number.isNotEmpty &&
+                    purpose.isNotEmpty &&
+                    meetingPerson.isNotEmpty) {
+                  submitForm(fullName, number, purpose, meetingPerson);
+                } else {
+                  print('Please fill in all fields.');
+                  _showPopupDialog(
+                      context, 'Error', 'Please fill in all fields.');
+                }
               },
               child: const Text('Submit'),
             ),
