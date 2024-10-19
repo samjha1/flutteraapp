@@ -94,35 +94,57 @@ class _FormPageState extends State<FormPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacement(
+            // Navigate back to the dashboard page and remove the current page from the stack
+            Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => DashboardPage()),
+              MaterialPageRoute(builder: (context) => const DashboardPage()),
+              (Route<dynamic> route) =>
+                  false, // Remove all routes until reaching the dashboard
             );
-            // Navigate back to the previous screen
           },
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: fullNameController,
-              decoration: const InputDecoration(labelText: 'Full Name'),
+              decoration: const InputDecoration(
+                labelText: 'Full Name',
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
+              ),
             ),
+            const SizedBox(height: 16), // Adds space between text fields
             TextField(
               controller: numberController,
-              decoration: const InputDecoration(labelText: 'Number'),
+              decoration: const InputDecoration(
+                labelText: 'Number',
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
+              ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: purposeController,
-              decoration: const InputDecoration(labelText: 'Purpose'),
+              decoration: const InputDecoration(
+                labelText: 'Purpose',
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
+              ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: meetingPersonController,
-              decoration: const InputDecoration(labelText: 'Meeting Person'),
+              decoration: const InputDecoration(
+                labelText: 'Meeting Person',
+                border:
+                    OutlineInputBorder(), // Adds a box around the text field
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24), // Space before submit button
             ElevatedButton(
               onPressed: () {
                 String fullName = fullNameController.text.trim();
