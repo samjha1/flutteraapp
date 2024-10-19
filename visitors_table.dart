@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'visitors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,6 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor:
             const Color.fromARGB(255, 9, 59, 133), // Dark blue background
         textTheme: const TextTheme(
-          // Update the text theme
           bodyLarge: TextStyle(color: Colors.white), // Updated for Flutter 2.5+
           bodyMedium: TextStyle(color: Color.fromARGB(255, 240, 236, 236)),
         ),
@@ -67,6 +67,19 @@ class _VisitorsdataState extends State<Visitorsdata> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Visitors Table'), // Add 'const' here
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: '+ Add Visitor',
+            onPressed: () {
+              // Navigate to the AddVisitorPage
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const VisitorsScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator()) // Add 'const' here
@@ -90,7 +103,6 @@ class _VisitorsdataState extends State<Visitorsdata> {
                             255, 17, 157, 212), // Set header background color
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: const Text(
-                          // Add 'const' here
                           'Full Name',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.white),
@@ -104,7 +116,6 @@ class _VisitorsdataState extends State<Visitorsdata> {
                             255, 17, 157, 212), // Set header background color
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: const Text(
-                          // Add 'const' here
                           'Number',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.white),
@@ -117,7 +128,6 @@ class _VisitorsdataState extends State<Visitorsdata> {
                             255, 17, 157, 212), // Set header background color
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: const Text(
-                          // Add 'const' here
                           'Purpose',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.white),
@@ -130,7 +140,6 @@ class _VisitorsdataState extends State<Visitorsdata> {
                             255, 17, 157, 212), // Set header background color
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: const Text(
-                          // Add 'const' here
                           'Meeting Person',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -154,6 +163,64 @@ class _VisitorsdataState extends State<Visitorsdata> {
                 ),
               ),
             ),
+    );
+  }
+}
+
+// New page for adding visitor details
+class AddVisitorPage extends StatelessWidget {
+  const AddVisitorPage({super.key}); // Add 'const' here
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add New Visitor'), // Add 'const' here
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Full Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Number',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Purpose',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Meeting Person',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Handle form submission
+                // Add logic to save the new visitor
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
