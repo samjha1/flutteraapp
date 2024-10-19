@@ -4,7 +4,8 @@ import 'visitors.dart'; // Ensure this import matches your file name
 import 'skill.dart';
 import 'SiteBooking.dart';
 import 'games.dart' as games; // Prefix for games.dart
-import 'balance.dart' as balance; // Prefix for balance.dart
+import 'visitors_table.dart'
+    as visitors_table; // Prefix for visitors_table.dart
 import 'profile.dart'; // Import the ProfileScreen
 import 'login_page.dart';
 
@@ -55,7 +56,7 @@ class DashboardPage extends StatelessWidget {
               icon: Icons.group, label: 'Visitors', color: Colors.blueAccent),
           DashboardItem(
               icon: Icons.account_balance_outlined,
-              label: 'Balance',
+              label: 'visitors_table',
               color: Colors.green),
           DashboardItem(
               icon: Icons.videogame_asset,
@@ -145,11 +146,11 @@ class DashboardItem extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const VisitorsScreen()));
-            } else if (label == 'Balance') {
+            } else if (label == 'visitors_table') {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => balance.Visitorsdata()));
+                      builder: (context) => visitors_table.Visitorsdata()));
             } else if (label == 'Games') {
               Navigator.push(
                   context,
