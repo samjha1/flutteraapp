@@ -125,21 +125,20 @@ class _VisitorsdataState extends State<Visitorsdata> {
               ),
               Expanded(
                 child: DataTable2(
-                  columnSpacing: 12,
-                  horizontalMargin: 12,
-                  minWidth: 600,
-                  dataRowHeight: 60,
-                  headingRowHeight: 60,
+                  columnSpacing: 6, // Reduced space between columns
+                  horizontalMargin: 8, // Reduced horizontal margin
+                  minWidth: 370,
+                  dataRowHeight: 40, // Reduced row height
+                  headingRowHeight: 40, // Reduced header row height
                   columns: [
                     DataColumn2(
                       label: Container(
-                        color: const Color.fromARGB(255, 17, 157, 212),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 6),
                         child: const Text(
                           'Full Name',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                               color: Colors.white),
                         ),
                       ),
@@ -147,39 +146,36 @@ class _VisitorsdataState extends State<Visitorsdata> {
                     ),
                     DataColumn(
                       label: Container(
-                        color: const Color.fromARGB(255, 17, 157, 212),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 6),
                         child: const Text(
                           'Number',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                               color: Colors.white),
                         ),
                       ),
                     ),
                     DataColumn(
                       label: Container(
-                        color: const Color.fromARGB(255, 17, 157, 212),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 6),
                         child: const Text(
                           'Purpose',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                               color: Colors.white),
                         ),
                       ),
                     ),
                     DataColumn(
                       label: Container(
-                        color: const Color.fromARGB(255, 17, 157, 212),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 6),
                         child: const Text(
-                          'Meeting Person',
+                          'Meeting ',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                               color: Colors.white),
                         ),
                       ),
@@ -199,19 +195,19 @@ class _VisitorsdataState extends State<Visitorsdata> {
                         DataCell(Text(
                           visitor['full_name'] ?? 'N/A',
                           style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500),
+                              fontSize: 13, fontWeight: FontWeight.w500),
                         )),
                         DataCell(Text(
                           visitor['number'] ?? 'N/A',
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 13),
                         )),
                         DataCell(Text(
                           visitor['purpose'] ?? 'N/A',
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 13),
                         )),
                         DataCell(Text(
                           visitor['meeting_person'] ?? 'N/A',
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 13),
                         )),
                       ],
                     );
