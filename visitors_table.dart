@@ -2,7 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'visitors.dart'; // Make sure this imports your VisitorsScreen widget
+import 'visitors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Visitors Table',
       theme: ThemeData.dark().copyWith(
         primaryColor: const Color.fromARGB(255, 23, 146, 207),
-        scaffoldBackgroundColor:
-        const Color.fromARGB(255, 9, 59, 133), // Dark blue background
+        scaffoldBackgroundColor: const Color.fromARGB(255, 9, 59, 133),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
           bodyMedium: TextStyle(color: Color.fromARGB(255, 240, 236, 236)),
@@ -37,25 +36,34 @@ class Visitorsdata extends StatefulWidget {
 }
 
 class _VisitorsdataState extends State<Visitorsdata> {
-  List visitors = []; // List to hold visitors data
-  bool isLoading = true; // To show loading indicator
+  List visitors = [];
+  bool isLoading = true;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    fetchVisitorsData();
+    fetchVisitorsData(); // Fetch all visitors initially
   }
 
-  // Fetching visitors data from the backend
-  Future<void> fetchVisitorsData() async {
-    final response =
-    await http.get(Uri.parse('http://localhost/api/get_all_visitors.php'));
+  // Function to fetch data with optional search parameter
+  Future<void> fetchVisitorsData([String? searchQuery]) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Construct the URL with the optional search query
+    String url = 'https://api.indataai.in/durga/get_all_visitors.php';
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      url += '?search=$searchQuery';
+    }
+
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      // Decode the JSON response from the backend
       setState(() {
         visitors = json.decode(response.body);
-        isLoading = false; // Stop loading once data is fetched
+        isLoading = false;
       });
     } else {
       throw Exception('Failed to load visitors data');
@@ -67,8 +75,7 @@ class _VisitorsdataState extends State<Visitorsdata> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Visitors Table'),
-        backgroundColor: const Color.fromARGB(255, 23, 146, 207),
-        elevation: 0,
+        backgroundColor: const Color.fromARGB(255, 23, 20, 184),
         actions: [
           TextButton.icon(
             icon: const Icon(Icons.add, color: Colors.white),
@@ -77,7 +84,6 @@ class _VisitorsdataState extends State<Visitorsdata> {
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () {
-              // Navigate to the AddVisitorPage
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const VisitorsScreen()),
@@ -88,135 +94,129 @@ class _VisitorsdataState extends State<Visitorsdata> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 17, 157, 212),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              )
-            ],
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search Visitors...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onChanged: (value) {
+                // Fetch data based on the search input
+                fetchVisitorsData(value);
+              },
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  'Visitor List',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+          Expanded(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : DataTable2(
+                    columnSpacing: 0,
+                    horizontalMargin: 0,
+                    minWidth: 370,
+                    dataRowHeight: 50,
+                    headingRowHeight: 50,
+                    columns: const [
+                      DataColumn2(
+                        label: Center(
+                          child: Text(
+                            'Full Name',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        size: ColumnSize.L,
+                      ),
+                      DataColumn(
+                        label: Center(
+                          child: Text(
+                            'Number',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Center(
+                          child: Text(
+                            'Purpose',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Center(
+                          child: Text(
+                            'Meeting',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    rows: visitors.map<DataRow>((visitor) {
+                      return DataRow(
+                        cells: [
+                          DataCell(Center(
+                            child: Text(
+                              visitor['full_name'] ?? 'N/A',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          )),
+                          DataCell(Center(
+                            child: Text(
+                              visitor['number'] ?? 'N/A',
+                              style: const TextStyle(
+                                  fontSize: 13, color: Colors.black),
+                            ),
+                          )),
+                          DataCell(Center(
+                            child: Text(
+                              visitor['purpose'] ?? 'N/A',
+                              style: const TextStyle(
+                                  fontSize: 13, color: Colors.black),
+                            ),
+                          )),
+                          DataCell(Center(
+                            child: Text(
+                              visitor['meeting_person'] ?? 'N/A',
+                              style: const TextStyle(
+                                  fontSize: 13, color: Colors.black),
+                            ),
+                          )),
+                        ],
+                      );
+                    }).toList(),
                   ),
-                ),
-              ),
-              Expanded(
-                child: DataTable2(
-                  columnSpacing: 6, // Reduced space between columns
-                  horizontalMargin: 8, // Reduced horizontal margin
-                  minWidth: 370,
-                  dataRowHeight: 40, // Reduced row height
-                  headingRowHeight: 40, // Reduced header row height
-                  columns: [
-                    DataColumn2(
-                      label: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: const Text(
-                          'Full Name',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Colors.white),
-                        ),
-                      ),
-                      size: ColumnSize.L,
-                    ),
-                    DataColumn(
-                      label: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: const Text(
-                          'Number',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: const Text(
-                          'Purpose',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: const Text(
-                          'Meeting ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                  rows: visitors.map<DataRow>((visitor) {
-                    return DataRow(
-                      color: MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.selected)) {
-                            return const Color.fromARGB(255, 17, 120, 180);
-                          }
-                          return const Color.fromARGB(255, 240, 240, 240);
-                        },
-                      ),
-                      cells: [
-                        DataCell(Text(
-                          visitor['full_name'] ?? 'N/A',
-                          style: const TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w500),
-                        )),
-                        DataCell(Text(
-                          visitor['number'] ?? 'N/A',
-                          style: const TextStyle(fontSize: 13),
-                        )),
-                        DataCell(Text(
-                          visitor['purpose'] ?? 'N/A',
-                          style: const TextStyle(fontSize: 13),
-                        )),
-                        DataCell(Text(
-                          visitor['meeting_person'] ?? 'N/A',
-                          style: const TextStyle(fontSize: 13),
-                        )),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
           ),
-        ),
+        ],
       ),
     );
   }
