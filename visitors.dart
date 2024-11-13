@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dashboard_page.dart';
+import 'profile.dart';
 
 void main() {
   runApp(const VisitorsScreen());
@@ -35,7 +36,8 @@ class _FormPageState extends State<FormPage> {
   Future<void> submitForm(String fullName, String number, String purpose,
       String meetingPerson) async {
     final response = await http.post(
-      Uri.parse('http://localhost/api/visitors.php'), // Update this URL
+      Uri.parse(
+          'https://api.indataai.in/durga/visitors.php'), // Update this URL
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -65,7 +67,6 @@ class _FormPageState extends State<FormPage> {
     }
   }
 
-  // Function to show the popup dialog
   void _showPopupDialog(BuildContext context, String title, String message) {
     showDialog(
       context: context,
@@ -94,12 +95,10 @@ class _FormPageState extends State<FormPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Navigate back to the dashboard page and remove the current page from the stack
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const DashboardPage()),
-              (Route<dynamic> route) =>
-                  false, // Remove all routes until reaching the dashboard
+              (Route<dynamic> route) => false,
             );
           },
         ),
@@ -109,42 +108,38 @@ class _FormPageState extends State<FormPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text('Full Name'),
             TextField(
               controller: fullNameController,
               decoration: const InputDecoration(
-                labelText: 'Full Name',
-                border:
-                    OutlineInputBorder(), // Adds a box around the text field
+                border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16), // Adds space between text fields
+            const SizedBox(height: 16),
+            const Text('Number'),
             TextField(
               controller: numberController,
               decoration: const InputDecoration(
-                labelText: 'Number',
-                border:
-                    OutlineInputBorder(), // Adds a box around the text field
+                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
+            const Text('Purpose'),
             TextField(
               controller: purposeController,
               decoration: const InputDecoration(
-                labelText: 'Purpose',
-                border:
-                    OutlineInputBorder(), // Adds a box around the text field
+                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
+            const Text('Meeting Person'),
             TextField(
               controller: meetingPersonController,
               decoration: const InputDecoration(
-                labelText: 'Meeting Person',
-                border:
-                    OutlineInputBorder(), // Adds a box around the text field
+                border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 24), // Space before submit button
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
                 String fullName = fullNameController.text.trim();
@@ -164,6 +159,46 @@ class _FormPageState extends State<FormPage> {
                 }
               },
               child: const Text('Submit'),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        height: 70.0,
+        color: Colors.blueAccent,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.home, color: Colors.black),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DashboardPage()),
+                  (Route<dynamic> route) => false,
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings, color: Colors.black),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.person, color: Colors.black),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
+                );
+              },
             ),
           ],
         ),
