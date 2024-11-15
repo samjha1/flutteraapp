@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'customer_list.dart';
 import 'dashboard_page.dart'; // Assuming this is your dashboard page
-import 'profile.dart'; // Assuming this is your profile page
+import 'profile.dart'; // Assuming this is your profile page // Assuming this is your customer list page
 
 void main() {
   runApp(const CustomersScreen());
@@ -50,7 +51,7 @@ class _FormPageState extends State<FormPage> {
 
   Future<void> submitForm() async {
     final response = await http.post(
-      Uri.parse('http://localhost/api/customers.php'), // Backend URL
+      Uri.parse('http://10.0.2.2/api/customers.php'), // Backend URL
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -155,7 +156,14 @@ class _FormPageState extends State<FormPage> {
                 ),
                 onPressed: () {
                   if (_validateForm()) {
-                    submitForm();
+                    submitForm().then((_) {
+                      // If form submission is successful, navigate to CustomerListScreen
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) =>  CustomerListScreen()),
+                            (Route<dynamic> route) => false, // Remove previous routes
+                      );
+                    });
                   } else {
                     _showSnackbar(context, 'Error', 'Please fill in all fields.');
                   }
@@ -255,7 +263,7 @@ class _FormPageState extends State<FormPage> {
             child: DropdownButton<String>(
               isExpanded: true,
               value: selectedValue,
-              icon: const Icon(Icons.arrow_drop_down),
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.blueAccent),
               onChanged: onChanged,
               items: items.map((String value) {
                 return DropdownMenuItem<String>(
