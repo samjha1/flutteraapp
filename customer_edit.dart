@@ -62,9 +62,10 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
     super.dispose();
   }
 
+  // Update customer information
   Future<void> _updateCustomer() async {
     final response = await http.post(
-      Uri.parse('http://localhost/api/update_customer.php'),
+      Uri.parse('http://10.0.2.2/api/update_customer.php'),
       body: {
         'id': widget.customer['id'].toString(),
         'first_name': firstNameController.text,
@@ -85,14 +86,14 @@ class _EditCustomerPageState extends State<EditCustomerPage> {
 
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
-      if (result['success'] != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      if (result['success'] != null && result['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Customer updated successfully'),
         ));
-        Navigator.pop(context);
+        Navigator.pop(context); // Close the edit page and return to the previous screen
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to update customer'),
+          content: Text('Failed to update customer: ${result['error'] ?? 'Unknown error'}'),
         ));
       }
     } else {
