@@ -1,13 +1,14 @@
+
 import 'package:flutter/material.dart';
+import 'fetchdairy_records.dart';
 import 'sidebar.dart';  // Import the Sidebar widget
 import 'visitors.dart';
 import 'home.dart';
 import 'visitors_table.dart' as visitors_table;
 import 'profile.dart';
-import 'skill.dart';
+import 'dairyScreen.dart';
 import 'SiteBooking.dart';
 import 'settings.dart';
-import 'games.dart' as games;
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -214,12 +215,12 @@ class DashboardItem extends StatelessWidget {
             } else if (label == 'Diary') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const games.GameScreen()),
+                MaterialPageRoute(builder: (context) => const dairyScreen()),
               );
             } else if (label == 'Diary List') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  SkillScreen()),
+                MaterialPageRoute(builder: (context) =>  fetchdairy_records()),
               );
             } else if (label == 'Site Booking') {
               Navigator.push(
