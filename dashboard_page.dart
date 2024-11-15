@@ -1,14 +1,24 @@
-
 import 'package:flutter/material.dart';
-import 'fetchdairy_records.dart';
-import 'sidebar.dart';  // Import the Sidebar widget
 import 'visitors.dart';
-import 'home.dart';
+import 'customer_list.dart';
+import 'SiteBooking.dart';
+import 'customers.dart' as games;
 import 'visitors_table.dart' as visitors_table;
 import 'profile.dart';
-import 'dairyScreen.dart';
-import 'SiteBooking.dart';
-import 'settings.dart';
+import 'login_page.dart';
+import 'home.dart';
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: const Center(child: Text('Settings Page')),
+    );
+  }
+}
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -19,22 +29,61 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Dashboard'),
         backgroundColor: Colors.blue.shade900,
-        actions: [
-          IconButton(
-            color: Colors.white,
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              // Navigate to the notification page
-              print('Notification Icon Pressed');
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const NotificationPage()),
-              );
-            },
-          ),
-        ],
       ),
-      drawer:  const SideBar(),  // Use the Sidebar widget here
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue.shade900,
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sam',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Application Developer',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -50,7 +99,7 @@ class DashboardPage extends StatelessWidget {
               margin: const EdgeInsets.all(16.0),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.blueAccent,
                 borderRadius: BorderRadius.circular(15.0),
                 boxShadow: const [
                   BoxShadow(
@@ -64,14 +113,14 @@ class DashboardPage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/images/SAM.jpeg'),
+                    backgroundImage: AssetImage('assets/images/durga.jpg'),
                   ),
                   SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'wereads',
+                        'Durga',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -80,7 +129,7 @@ class DashboardPage extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Indian Law Practice',
+                        'Application Developer',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black54,
@@ -91,7 +140,6 @@ class DashboardPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Dashboard Items
             Expanded(
               child: GridView.count(
                 padding: const EdgeInsets.all(20.0),
@@ -100,23 +148,23 @@ class DashboardPage extends StatelessWidget {
                 mainAxisSpacing: 16.0,
                 children: const [
                   DashboardItem(
-                    icon: Icons.question_mark_outlined,
-                    label: 'Enquiry',
+                    icon: Icons.people_alt_outlined,
+                    label: 'Visitors',
                     color: Colors.blueAccent,
-                  ),//AIzaSyAAbCAuT9ZhuDx9cH6_qqdZZTGSgL57Ims
+                  ),
                   DashboardItem(
-                    icon: Icons.app_registration_outlined,
-                    label: 'Registration',
+                    icon: Icons.table_chart_outlined,
+                    label: 'Visitors Table',
                     color: Colors.teal,
                   ),
                   DashboardItem(
-                    icon: Icons.book_outlined,
-                    label: 'Diary',
+                    icon: Icons.person_2_rounded,
+                    label: 'Customers',
                     color: Colors.deepPurple,
                   ),
                   DashboardItem(
-                    icon: Icons.lightbulb_outline,
-                    label: 'Diary List',
+                    icon: Icons.list_alt_rounded,
+                    label: 'Customers list',
                     color: Colors.orange,
                   ),
                   DashboardItem(
@@ -147,7 +195,7 @@ class DashboardPage extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const HomeScreen()),
-                      (Route<dynamic> route) => false,
+                  (Route<dynamic> route) => false,
                 );
               },
             ),
@@ -156,7 +204,8 @@ class DashboardPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()),
                 );
               },
             ),
@@ -165,7 +214,8 @@ class DashboardPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
                 );
               },
             ),
@@ -199,36 +249,35 @@ class DashboardItem extends StatelessWidget {
       child: InkWell(
         onTap: () async {
           try {
-            // Navigate to the appropriate page based on the label
-            if (label == 'Enquiry') {
+            if (label == 'Visitors') {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const VisitorsScreen()),
               );
-            } else if (label == 'Registration') {
+            } else if (label == 'Visitors Table') {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const visitors_table.Visitorsdata(),
                 ),
               );
-            } else if (label == 'Diary') {
+            } else if (label == 'Customers') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const dairyScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const games.CustomersScreen()),
               );
-            } else if (label == 'Diary List') {
+            } else if (label == 'Customers list') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>  fetchdairy_records()),
+                MaterialPageRoute(builder: (context) =>  CustomerListScreen()),
               );
             } else if (label == 'Site Booking') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SiteBookingPage()),
+                MaterialPageRoute(
+                    builder: (context) => const SiteBookingPage()),
               );
-            } else if (label == 'Social Media') {
-              // Add your navigation here for Social Media page if needed
             }
           } catch (e) {
             ScaffoldMessenger.of(context)
@@ -266,20 +315,6 @@ class DashboardItem extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class NotificationPage extends StatelessWidget {
-  const NotificationPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-      ),
-      body: const Center(child: Text('This is the notification details page')),
     );
   }
 }
