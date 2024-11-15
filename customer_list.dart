@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'customer_edit.dart';
+import 'customers.dart';
 import 'profile.dart';
 import 'dashboard_page.dart';
 import 'customerdetailpage.dart';
-import 'customers.dart'; // Import the CustomerDetailPage
 
 class CustomerListScreen extends StatefulWidget {
   @override
@@ -23,31 +23,44 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
 
   // Function to fetch data from the backend
   Future<List<dynamic>> fetchData() async {
-    final response = await http.get(Uri.parse('http://localhost/api/fetch_customers.php'));
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2/api/fetch_customers.php'));
 
-    if (response.statusCode == 200) {
-      // Parse the JSON data
-      final List<dynamic> data = json.decode(response.body);
-      return data;
-    } else {
-      throw Exception('Failed to load data');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data;
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Failed to load data: $e');
     }
   }
 
   // Function to delete a customer
   Future<void> deleteCustomer(int customerId) async {
     final response = await http.post(
-      Uri.parse('http://localhost/api/deletecustomer.php'),
+      Uri.parse('http://10.0.2.2/api/deletecustomer.php'),
       body: {'id': customerId.toString()},
     );
 
     if (response.statusCode == 200) {
-      setState(() {
-        customerData = fetchData(); // Reload the data after deletion
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Customer deleted successfully'),
-      ));
+      var responseData = json.decode(response.body);
+      print(responseData); // Debug: Print response to check for success or error
+
+      if (responseData['success'] == true) {
+        setState(() {
+          customerData = fetchData(); // Reload data after deletion
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Customer deleted successfully'),
+        ));
+      } else {
+        print("Error deleting customer: ${responseData['error']}");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error deleting customer: ${responseData['error']}'),
+        ));
+      }
     } else {
       throw Exception('Failed to delete customer');
     }
@@ -84,6 +97,8 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                   itemCount: customerRecords.length,
                   itemBuilder: (context, index) {
                     final record = customerRecords[index];
+                    print(record['id'].runtimeType); // Debug: Check the type of 'id'
+
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -103,7 +118,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
                             children: [
-                              Icon(Icons.person, color: Colors.blueAccent, size: 30),
+                              const Icon(Icons.person, color: Colors.blueAccent, size: 30),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
@@ -111,7 +126,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                                   children: [
                                     Text(
                                       'First Name: ${record['first_name']}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black87,
@@ -128,7 +143,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                                     const SizedBox(height: 8),
                                     Text(
                                       'Mail ID: ${record['mail_id']}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                         color: Colors.blueAccent,
                                       ),
@@ -141,7 +156,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.edit, color: Colors.blueAccent),
+                                    icon: const Icon(Icons.edit, color: Colors.blueAccent),
                                     onPressed: () {
                                       Navigator.push(
                                         context,
@@ -152,9 +167,8 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                                     },
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.redAccent),
+                                    icon: const Icon(Icons.delete, color: Colors.redAccent),
                                     onPressed: () {
-                                      // Show confirmation dialog before deleting
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
@@ -170,7 +184,9 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                                               ),
                                               TextButton(
                                                 onPressed: () {
-                                                  deleteCustomer(record['id']); // Delete the customer
+                                                  // Convert 'id' to int and pass it to the delete function
+                                                  int customerId = int.parse(record['id'].toString());
+                                                  deleteCustomer(customerId); // Delete the customer
                                                   Navigator.of(context).pop(); // Close the dialog
                                                 },
                                                 child: const Text('Delete'),
@@ -200,10 +216,10 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CustomersScreen()), // Navigate to CustomersScreen
+                  MaterialPageRoute(builder: (context) => const CustomersScreen()),
                 );
               },
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
               backgroundColor: Colors.blueAccent,
             ),
           ),
@@ -228,7 +244,6 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
             IconButton(
               icon: const Icon(Icons.settings, color: Colors.black),
               onPressed: () {
-                // Ensure the SettingsScreen is defined properly
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -238,7 +253,6 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
             IconButton(
               icon: const Icon(Icons.person, color: Colors.black),
               onPressed: () {
-                // Ensure the ProfileScreen is defined properly
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ProfileScreen()),
