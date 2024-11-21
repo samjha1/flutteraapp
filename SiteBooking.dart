@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class SiteBookingPage extends StatefulWidget {
   const SiteBookingPage({super.key});
@@ -11,118 +10,119 @@ class SiteBookingPage extends StatefulWidget {
 
 class SiteBookingPageState extends State<SiteBookingPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _applicationIdController =
-      TextEditingController();
-  final TextEditingController _relationController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _occupationController = TextEditingController();
+  final Map<String, TextEditingController> _controllers = {
+    'application_id': TextEditingController(),
+    'booking_firm': TextEditingController(),
+    'first_name': TextEditingController(),
+    'middle_name': TextEditingController(),
+    'last_name': TextEditingController(),
+    'phone': TextEditingController(),
+    'email': TextEditingController(),
+    'dob': TextEditingController(),
+    'occupation': TextEditingController(),
+    'aadhar_no': TextEditingController(),
+    'nominee': TextEditingController(),
+    'relation': TextEditingController(),
+    'present_address': TextEditingController(),
+    'permanent_address': TextEditingController(),
+    'executive_name': TextEditingController(),
+    'manager_name': TextEditingController(),
+    'telecaller': TextEditingController(),
+    'payment_method': TextEditingController(),
+    'payment_details': TextEditingController(),
+    'apartment': TextEditingController(),
+    'next_payment_date': TextEditingController(),
+    // Added property details
+    'project': TextEditingController(),
+    'flat_plot_no': TextEditingController(),
+    'plot_size': TextEditingController(),
+    'rate': TextEditingController(),
+    'total_amount': TextEditingController(),
+    'booking_amount': TextEditingController(),
+  };
 
-  String? _selectedName;
-  List<String> _names = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchNames(); // Fetch names when the screen loads
-  }
-
-  Future<void> _fetchNames() async {
-    try {
-      final response = await http
-          .get(Uri.parse('https://api.indataai.in/durga/get_all_visitors.php'));
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _names = data.map((name) => name['full_name'] as String).toList();
-        });
-      } else {
-        // Error handling for non-200 response
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to load names')),
-        );
-      }
-    } catch (e) {
-      // Handle any exceptions during the HTTP request
-      print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error fetching names')),
-      );
-    }
-  }
-
-  Future<void> _fetchDetails(String name) async {
-    try {
-      final response = await http
-          .get(Uri.parse('http://localhost/api/fetch_details.php?name=$name'));
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        setState(() {
-          _applicationIdController.text =
-              data['id'].toString(); // Convert to string if necessary
-          _relationController.text =
-              data['number'].toString(); // Ensure it's a string
-          _dobController.text = data['dob'] ?? ''; // Check for null
-          _occupationController.text =
-              data['occupation'] ?? ''; // Check for null
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to load details')),
-        );
-      }
-    } catch (e) {
-      print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error fetching details')),
-      );
-    }
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       Map<String, String> data = {
-        'application_id': _applicationIdController.text,
-        'full_name': _selectedName ?? '',
-        'relation': _relationController.text,
-        'dob': _dobController.text,
-        'occupation': _occupationController.text,
+        for (var entry in _controllers.entries) entry.key: entry.value.text,
       };
 
       try {
-        var response = await http.post(
+        final response = await http.post(
           Uri.parse('https://api.indataai.in/durga/site_booking.php'),
           body: data,
         );
 
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('Form submitted successfully: ${response.body}')),
-          );
+          _showSnackBar('Form submitted successfully: ${response.body}');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('Failed to submit form: ${response.statusCode}')),
-          );
+          _showSnackBar('Failed to submit form: ${response.statusCode}');
         }
       } catch (e) {
-        print('Error: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error submitting form')),
-        );
+        _showSnackBar('Error submitting form: $e');
       }
     }
+  }
+
+  Widget _buildTextField(String key, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _controllers[key],
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+              hintText: 'Enter $label',
+              hintStyle: const TextStyle(color: Colors.grey),
+              filled: true,
+              fillColor: Colors.blueGrey[50],
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.blueGrey),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.blueAccent),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter $label';
+              }
+              return null;
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
+      backgroundColor: Colors.blueGrey[50],
       appBar: AppBar(
-        title: const Text('Site Booking Form'),
-        backgroundColor: Colors.blueGrey[300],
+        title: const Text('Site Booking'),
+        backgroundColor: Colors.blueAccent,
+        elevation: 0,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -135,71 +135,49 @@ class SiteBookingPageState extends State<SiteBookingPage> {
                 const Text(
                   'Fill in the details below:',
                   style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
+                    fontSize: 20,
+                    color: Colors.blueAccent,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  value: _selectedName,
-                  hint: const Text('Select Name',
-                      style: TextStyle(color: Colors.grey)),
-                  items: _names.map((String name) {
-                    return DropdownMenuItem<String>(
-                      value: name,
-                      child: Text(name),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedName = newValue;
-                      if (newValue != null) {
-                        _fetchDetails(newValue); // Fetch details on selection
-                      }
-                    });
-                  },
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blueAccent),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                // Existing form fields (user details)
+                for (var entry in _controllers.entries.take(20))
+                  _buildTextField(entry.key, entry.key.replaceAll('_', ' ').capitalize()),
+                const SizedBox(height: 20),
+                // Property details heading
+                const Text(
+                  'Add property details:',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blueAccent,
+                    fontWeight: FontWeight.bold,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select a name';
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 20),
-                _buildTextField(_applicationIdController, 'Application ID'),
-                const SizedBox(height: 20),
-                _buildTextField(_relationController, 'Relation'),
-                const SizedBox(height: 20),
-                _buildTextField(_dobController, 'Date of Birth (YYYY-MM-DD)'),
-                const SizedBox(height: 20),
-                _buildTextField(_occupationController, 'Occupation'),
+                // Property details fields
+                _buildTextField('project', 'Project'),
+                _buildTextField('flat_plot_no', 'Flat/Plot No'),
+                _buildTextField('plot_size', 'Plot Size (sq. ft.)'),
+                _buildTextField('rate', 'Rate'),
+                _buildTextField('total_amount', 'Total Amount'),
+                _buildTextField('booking_amount', 'Booking Amount'),
                 const SizedBox(height: 30),
+                // Submit button with custom styling
                 Center(
                   child: ElevatedButton(
                     onPressed: _submitForm,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(15)),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    child: const Text(
-                      'Submit',
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    child: const Text('Submit'),
                   ),
                 ),
               ],
@@ -209,29 +187,11 @@ class SiteBookingPageState extends State<SiteBookingPage> {
       ),
     );
   }
+}
 
-  Widget _buildTextField(TextEditingController controller, String label) {
-    return TextFormField(
-      controller: controller,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.grey),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.grey),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.blueAccent),
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $label';
-        }
-        return null;
-      },
-    );
+extension StringExtension on String {
+  String capitalize() {
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1)}';
   }
 }
