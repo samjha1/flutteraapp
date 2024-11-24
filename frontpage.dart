@@ -5,38 +5,39 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'SiteBooking.dart';
 import 'calender.dart';
 import 'customer_list.dart';
-import 'customers.dart';
+import 'followup.dart';
 import 'sidebar.dart';
-
 
 void main() {
   runApp(MaterialApp(
-    home: FrontPage(),
+    home: const FrontPage(),
     routes: {
-      '/Customers': (context) =>  CustomerListScreen(),
+      '/Customers': (context) => const CustomerListScreen(),
       '/site_booking': (context) => const SiteBookingPage(),
-      '/running_cases': (context) =>  FrontPage(),
-      '/date_awaited_cases': (context) => CustomerListScreen(),
-      '/decided_cases': (context) =>  FrontPage(),
-      '/pending_cases': (context) =>  FrontPage(),
+      '/running_cases': (context) =>  FollowUpPaymentsPage(),
+      '/date_awaited_cases': (context) => const CustomerListScreen(),
+      '/decided_cases': (context) => const FrontPage(),
+      '/pending_cases': (context) => const FrontPage(),
     },
   ));
 }
 
 class FrontPage extends StatelessWidget {
+  const FrontPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Durga Welcomes',
-          style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+          'Shri Durga Developers',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Color(0xFF800000),
+        backgroundColor: const Color(0xFF800000),
       ),
       drawer: const SideBar(),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.white, Colors.white],
             begin: Alignment.topLeft,
@@ -44,7 +45,7 @@ class FrontPage extends StatelessWidget {
           ),
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -53,7 +54,7 @@ class FrontPage extends StatelessWidget {
               _buildActionButtons(context),
               const SizedBox(height: 15.0),
               _buildBottomIcons(context),
-              const SizedBox(height: 15.0),
+              const SizedBox(height: 1.0),
               _buildCasesGrid(context),
             ],
           ),
@@ -72,7 +73,7 @@ class FrontPage extends StatelessWidget {
         autoPlayInterval: const Duration(seconds: 3),
         autoPlayAnimationDuration: const Duration(milliseconds: 800),
         enlargeCenterPage: true,
-        viewportFraction: 0.8,
+        viewportFraction: 1.0,
         aspectRatio: 1.5,
         enlargeFactor: 0.3,
         enableInfiniteScroll: true,
@@ -88,9 +89,9 @@ class FrontPage extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      color: Colors.blue.shade50,
+      color: Colors.grey[300],
       child: Padding(
-        padding: const EdgeInsets.all(25.0),
+        padding: const EdgeInsets.symmetric(vertical: 25.0,horizontal:0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -100,18 +101,17 @@ class FrontPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const VisitorsScreen()),
+                  MaterialPageRoute(builder: (context) =>  const VisitorsScreen()),
                 );
               },
             ),
             _buildElevatedButton(
-              label: 'visitors table',
+              label: 'Visitors Table',
               color: Colors.green,
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const Visitorsdata()),
+                  MaterialPageRoute(builder: (context) => const Visitorsdata()),
                 );
               },
             ),
@@ -124,7 +124,7 @@ class FrontPage extends StatelessWidget {
   // Bottom Icons Section
   Widget _buildBottomIcons(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -134,8 +134,7 @@ class FrontPage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const Visitorsdata()),
+                MaterialPageRoute(builder: (context) => const Visitorsdata()),
               );
             },
           ),
@@ -155,8 +154,7 @@ class FrontPage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const Visitorsdata()),
+                MaterialPageRoute(builder: (context) => const Visitorsdata()),
               );
             },
           ),
@@ -182,7 +180,7 @@ class FrontPage extends StatelessWidget {
   // Cases Grid Section
   Widget _buildCasesGrid(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 10),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -196,30 +194,30 @@ class FrontPage extends StatelessWidget {
         itemBuilder: (context, index) {
           return ElevatedButton(
             onPressed: () => _navigateToCase(context, index),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey[300],
+              padding: const EdgeInsets.all(12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   _getButtonIcon(index),
-                  size: 50.0,
-                  color: Color(0xFF800000),
+                  size: 80.0,
+                  color: const Color(0xFF800000),
                 ),
                 const SizedBox(height: 15.0),
                 Text(
                   _getButtonLabel(index),
-                  style: TextStyle(
-                    fontSize: 14.0,
+                  style: const TextStyle(
+                    fontSize: 17.0,
                     color: Color(0xFF800000),
                   ),
                 ),
               ],
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue.shade50,
-              padding: const EdgeInsets.all(12.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
             ),
           );
         },
@@ -231,60 +229,54 @@ class FrontPage extends StatelessWidget {
   List<Widget> _buildCarouselItems() {
     final carouselItems = [
       {
-        'color': Colors.lightBlueAccent,
-        'icon': Icons.notifications_active,
+        'color': const Color(0xFF800000),
+        'image': 'assets/images/img.webp',  // Path as string
         'text': 'Stay updated on court schedules and automatic hearing date updates.',
       },
       {
-        'color': Colors.grey,
-        'icon': Icons.description,
+        'color': const Color(0xFF800000),
+        'image': 'assets/images/sam.webp',  // Path as string
         'text': 'Upload and manage important case documents with ease.',
       },
       {
-        'color': Colors.orangeAccent,
-        'icon': Icons.chat_bubble,
+        'color': const Color(0xFF800000),
+        'image': 'assets/images/durga.jpg',  // Path as string
         'text': 'Chat with clients seamlessly through integrated messaging.',
       },
       {
-        'color': Colors.purple,
-        'icon': Icons.track_changes,
+        'color': const Color(0xFF800000),
+        'image': 'assets/images/img_1.webp',  // Path as string
         'text': 'Track the status of all your ongoing cases in real time.',
       },
       {
-        'color': Colors.blueGrey,
-        'icon': Icons.payment,
+        'color': const Color(0xFF800000),
+        'image': 'assets/images/img_2.webp',  // Path as string
         'text': 'Keep track of all case-related payments and transactions.',
       },
       {
-        'color': Colors.redAccent,
-        'icon': Icons.timer,
+        'color': const Color(0xFF800000),
+        'image': 'assets/images/img_3.webp',  // Path as string
         'text': 'Set and monitor upcoming deadlines for each case.',
       },
     ];
-
     return carouselItems.map((item) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(1.0),
         child: Container(
           color: item['color'] as Color,
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(0.0),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(item['icon'] as IconData, size: 60.0, color: Colors.blue.shade50),
-                const SizedBox(height: 10.0),
-                Text(
-                  item['text'] as String,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade50,
-                    height: 1.4,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+            child: item['image'] != null
+                ? Image.asset(
+              item['image'] as String, // This ensures it's a string path
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            )
+                : Icon(
+              item['icon'] as IconData,
+              size: 50.0,
+              color: Colors.white,
             ),
           ),
         ),
@@ -292,7 +284,8 @@ class FrontPage extends StatelessWidget {
     }).toList();
   }
 
-  // Helper Methods for Buttons
+
+  // Helper Method for Buttons
   Widget _buildElevatedButton({
     required String label,
     required Color color,
@@ -300,7 +293,6 @@ class FrontPage extends StatelessWidget {
   }) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: Text(label),
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
@@ -308,38 +300,44 @@ class FrontPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0),
         ),
       ),
+      child: Text(label),
     );
   }
 
-  Widget _buildIconButton(IconData icon, String label, {VoidCallback? onTap}) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: CircleAvatar(
-            radius: 28.0,
-            backgroundColor: Colors.blue.shade100,
-            child: Icon(icon, size: 30.0, color: const Color(0xFF800000)),
+  // Helper Method for Icons
+  Widget _buildIconButton(IconData icon, String label, {required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 50.0,
+            color: const Color(0xFF800000),
           ),
-        ),
-        const SizedBox(height: 8.0),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),
-        ),
-      ],
+          const SizedBox(height: 8.0),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14.0,
+              color: Color(0xFF800000),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   // Navigation Method for Case Buttons
   void _navigateToCase(BuildContext context, int index) {
     final caseRoutes = [
-       CustomerListScreen(),
+      const CustomerListScreen(),
       const SiteBookingPage(),
-       FrontPage(),
-      CustomerListScreen(),
-       FrontPage(),
-       FrontPage(),
+       FollowUpPaymentsPage(),
+      const CustomerListScreen(),
+      const FrontPage(),
+      const FrontPage(),
     ];
 
     if (index >= 0 && index < caseRoutes.length) {
@@ -358,7 +356,7 @@ class FrontPage extends StatelessWidget {
       case 1:
         return Icons.book;
       case 2:
-        return Icons.upcoming;
+        return Icons.follow_the_signs;
       case 3:
         return Icons.upcoming;
       case 4:
@@ -377,7 +375,7 @@ class FrontPage extends StatelessWidget {
       case 1:
         return 'Site Booking';
       case 2:
-        return 'upcoming';
+        return 'Followup';
       case 3:
         return 'upcoming';
       case 4:
